@@ -1,0 +1,109 @@
+/*
+ * Base structure
+ */
+/* Move down content because we have a fixed navbar that is 50px tall */
+/* line 7, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+body {
+  padding-top: 50px;
+}
+
+/*
+ * Global add-ons
+ */
+/* line 16, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+.sub-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/*
+ * Sidebar
+ */
+/* Hide for mobile, show later */
+/* line 27, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+.sidebar {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  /* line 31, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+  .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Scrollable contents if viewport is shorter than content. */
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+  }
+}
+/* Sidebar navigation */
+/* line 47, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+.nav-sidebar {
+  margin-right: -21px;
+  /* 20px padding + 1px border */
+  margin-bottom: 20px;
+  margin-left: -20px;
+}
+
+/* line 52, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+.nav-sidebar > li > a {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+/* line 56, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+.nav-sidebar > .active > a {
+  color: #fff;
+  background-color: #428bca;
+}
+
+/*
+ * Main content
+ */
+/* line 66, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+.main {
+  padding: 20px;
+}
+
+@media (min-width: 768px) {
+  /* line 70, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+  .main {
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+}
+/* line 75, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+.main .page-header {
+  margin-top: 0;
+}
+
+/*
+ * Placeholder dashboard ideas
+ */
+/* line 84, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+.placeholders {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* line 88, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+.placeholders h4 {
+  margin-bottom: 0;
+}
+
+/* line 91, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+.placeholder {
+  margin-bottom: 20px;
+}
+
+/* line 94, /Users/nathan/Sites/freon_finder/app/assets/stylesheets/modules/home.scss */
+.placeholder img {
+  display: inline-block;
+  border-radius: 50%;
+}
