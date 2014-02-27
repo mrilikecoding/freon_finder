@@ -2,11 +2,6 @@
 
 var app = app || {}
 
-// 3taps config @todo move to private
-var auth_token = "6480f6c096df27e96b7da685d3f1c1ee";
-//number of results per page
-var rpp = "5";
-var heading = "freon";
 
 // MODELS
 
@@ -29,8 +24,6 @@ window.Postings = Backbone.Collection.extend({
     model: Posting,
     url:"/list"
 });
-
-
 
 // VIEWS
 
@@ -90,12 +83,7 @@ var AppRouter = Backbone.Router.extend({
                 console.log(self);
             }
         });
-
     }
-
-
-
-
 });
 
 
