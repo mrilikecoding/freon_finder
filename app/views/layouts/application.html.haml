@@ -1,0 +1,18 @@
+!!!
+/[if lt IE 7] <html class="ie lt-ie9 lt-ie8 lt-ie7" lang="en">
+/[if IE 7] <html class="ie lt-ie9 lt-ie8" lang="en">
+/[if IE 8] <html class="ie lt-ie9" lang="en">
+/[if IE 9 ]> <html lang="en" class="ie lt-ie10">
+:plain
+  <!--[if (gt IE 9)|!(IE)]>
+%html{:lang => "en"}
+  :plain
+    <![endif]-->
+  %head
+    = csrf_meta_tags
+    = yield :css_placeholder
+    = yield :js_placeholder
+
+  %body
+    = yield
+    = yield :end_of_body_placeholder
