@@ -11,8 +11,8 @@
 #   - dist/**/*.js
 #
 src_files:
-  - /assets/manifests/home.js
   - /assets/vendor/sinon.js
+  - /assets/manifests/home.js
 
 # stylesheets
 #

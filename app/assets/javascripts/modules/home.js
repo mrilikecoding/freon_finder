@@ -23,6 +23,7 @@ FreonFinder.home = (function($, document, window, undefined) {
      **/
 
     function init() {
+
     }
 
 

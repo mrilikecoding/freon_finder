@@ -23,6 +23,7 @@ window.Posting = Backbone.Model.extend({
 window.Postings = Backbone.Collection.extend({
     model: Posting,
     url:"/list"
+
 });
 
 // VIEWS
@@ -34,8 +35,9 @@ window.PostingsView = Backbone.View.extend({
     render: function(){
         var self = this;
         console.log(self.model.toJSON());
+        $('.spinner').remove();
         _.each(self.model.models, function (posting) {
-            $('.freon-finder').append(self.template(posting.toJSON()));
+            $('.freon-finder tbody').append(self.template(posting.toJSON()));
         });
         return this;
     }
