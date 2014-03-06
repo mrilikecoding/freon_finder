@@ -34,8 +34,7 @@ window.PostingsView = Backbone.View.extend({
     },
     render: function(){
         var self = this;
-        console.log(self.model.toJSON());
-        $('.spinner').remove();
+        $('.spinner').hide();
         _.each(self.model.models, function (posting) {
             $('.freon-finder tbody').append(self.template(posting.toJSON()));
         });
@@ -44,13 +43,47 @@ window.PostingsView = Backbone.View.extend({
 });
 
 window.MapView = Backbone.View.extend({
+
    initialize: function(){
         this.template = _.template(tpl.get('map'));
     },
-    render: function(){
-        $('.freon-finder tbody').html(this.template(this.model.toJSON()));
-        return this;
-    }
+   render: function(){
+        var self = this;
+        $('.freon-finder .map-container').html(self.template(this.model.toJSON()));
+       return this;
+   },
+   events: {
+        'click li.map': function(){
+        }
+   },
+
+   drawMap: function() {
+       var self = this;
+       var mapOptions = {
+           center: new google.maps.LatLng(41.397, -87.644),
+           zoom: 5
+       };
+
+       var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+
+       _.each(self.model.models, function (posting) {
+           var lat = posting.attributes.location.lat;
+           var long = posting.attributes.location.long;
+//           var Latlng = new google.maps.LatLng(-25.363882,131.044922);
+           var Latlng = new google.maps.LatLng(lat,long);
+
+           var marker = new google.maps.Marker({
+               position: Latlng,
+               title:"Hello World!"
+           });
+
+
+           // To add the marker to the map, call setMap();
+           marker.setMap(map);
+       });
+
+
+   }
 });
 
 // ROUTER
@@ -71,18 +104,20 @@ var AppRouter = Backbone.Router.extend({
         app.postingsView.trigger('rendered');
     },
 
-    renderMap   : function (self) {
-        app.mapView = new MapView();
+    renderMap: function (self) {
+        app.mapView = new MapView({model:self.postings});
         app.mapView.render();
-        app.mapView.trigger('rendered');
+        app.mapView.drawMap(self);
+        app.mapView.trigger('mapViewRendered');
+
     },
 
     bootstrapPostings: function(self){
         self.postings = new Postings();
         self.postings.fetch({
             success: function(){
+                self.renderMap(self);
                 self.renderPostings(self);
-                console.log(self);
             }
         });
     }

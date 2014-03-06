@@ -1,6 +1,7 @@
 = content_for :css_placeholder do
   = stylesheet_link_tag "manifests/home"
 = content_for :js_placeholder do
+  %script{:type => 'text/javascript', :src => "https://maps.googleapis.com/maps/api/js?key=AIzaSyA9zZ5mWAS3ZkfLL9_tpb_flDGwhEiNHNw&sensor=false"}
   = javascript_include_tag "manifests/home"
 
 .navbar.navbar-default.navbar-fixed-top{role: "navigation"}
@@ -11,26 +12,20 @@
         %span.icon-bar
         %span.icon-bar
         %span.icon-bar
-      %a.navbar-brand{href: "#"} Freon Finder
+      %a.navbar-brand{href: "#"} Freon Finder | Recent Craigslist Postings for Freon
     .navbar-collapse.collapse
-      -#%ul.nav.navbar-nav.navbar-right
-        %li
-          %a{href: "#"} Dashboard
-        %li
-          %a{href: "#"} Settings
-        %li
-          %a{href: "#"} Profile
-        %li
-          %a{href: "#"} Help
-      -#%form.navbar-form.navbar-right
-        %input.form-control{placeholder: "Search...", type: "text"}/
+      %ul.nav.navbar-nav.navbar-right
+        %li.listings
+          %a{href: "#"} Listings
+        %li.map
+          %a{href: "#"} Map View
+
 .container
-  %h1.page-header List View
-  %p Recent Craigslist Postings for 'Freon'
   .freon-finder
     .table-responsive
       %table.table.table-striped
         %thead
+        .map-container
           %tr
             %th City
             %th State

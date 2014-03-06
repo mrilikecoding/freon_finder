@@ -29,6 +29,9 @@ FreonFinder.home = (function($, document, window, undefined) {
 
     /* Private Methods ________________________________________________________________ */
 
+
+
+
     return {
         init: init
     };

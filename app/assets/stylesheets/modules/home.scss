@@ -5,7 +5,26 @@
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
   padding-top: 50px;
-  background: #eee;
+  background: #CDDBBD;
+  .container {
+    background: #fff;
+    padding: 0;
+  }
+
+  .map-container{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+    #map-canvas {
+      height: 300px;
+
+
+    }
+  }
+
+
 }
 
 
