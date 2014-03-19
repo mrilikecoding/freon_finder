@@ -39,7 +39,6 @@ freonFinder.collection.Postings = Backbone.Collection.extend({
 
     url: "/list"
 
-
 });
 
 
@@ -62,17 +61,18 @@ freonFinder.view.PostingsItem = Backbone.View.extend({
 });
 
 freonFinder.view.PostingsContainer = Backbone.View.extend({
-    tagName: 'div',
     events: {
-        "keyup #searchTask" : "search",
-        "rendered" : "search"
+        "keyup #searchTask" : "search"
     },
     render: function(data) {
-        $(this.el).html(this.template).trigger('rendered');
-
+        $(this.el).html(this.template);
         return this;
     },
     renderList : function(postings){
+        console.log('render');
+
+        $("tbody").html("");
+
         postings.each(function(posting){
 
             var view = new freonFinder.view.PostingsItem({
@@ -87,10 +87,9 @@ freonFinder.view.PostingsContainer = Backbone.View.extend({
     initialize : function(){
         this.template = _.template(tpl.get('posting_container'));
         this.collection.bind("reset", this.render, this);
-        //this.on('rendered', this.search, this);
     },
     search: function(e){
-        var letters = $("#searchTask").val() ? $("#searchTask").val() : "freon";
+        var letters = $("#searchTask").val();
         this.renderList(this.collection.search(letters));
     }
 });
@@ -99,9 +98,6 @@ freonFinder.view.PostingsContainer = Backbone.View.extend({
 freonFinder.view.MapsContainer = Backbone.View.extend({
     tagName: 'div class="map-container"',
 
-//    events: {
-//        "keyup #searchTask" : "search"
-//    },
 
     initialize: function(){
         this.template = _.template(tpl.get('map'));
@@ -113,10 +109,6 @@ freonFinder.view.MapsContainer = Backbone.View.extend({
         $(this.el).html(this.template);
         return this;
     },
-//    search: function(e){
-//        var letters = $("#searchTask").val();
-//        this.drawMap(this.collection);
-//    },
 
     drawMap: function(postings) {
         var self = this;
