@@ -14,7 +14,6 @@ gem 'pg'
 #assets
 gem 'haml-rails'
 gem 'sass-rails', '>= 3.2'
-gem 'bootstrap-sass'
 gem 'compass-rails'
 gem 'susy', git: "git://github.com/ericam/susy.git"
 gem 'sassy-buttons'
