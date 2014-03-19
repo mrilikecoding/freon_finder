@@ -12,41 +12,31 @@
         %span.icon-bar
         %span.icon-bar
         %span.icon-bar
-      %a.navbar-brand{href: "#"} Freon Finder | Recent Craigslist Postings for Freon
+      %a.navbar-brand{href: "#"} Freon Finder
     .navbar-collapse.collapse
+      %form.navbar-form.navbar-right
+        -#%input#filter{:type => "text", :class => "form-control", :placeholder => "Search..."}
+
       %ul.nav.navbar-nav.navbar-right
         %li.listings
-          %a{href: "#"} Listings
-        %li.map
-          %a{href: "#"} Map View
-
+          %a#csv{href: "#"}
+            Export CSV
+            .glyphicon.glyphicon-cloud-download
 .container
   .freon-finder
-    .table-responsive
-      %table.table.table-striped
-        %thead
-        .map-container
-          %tr
-            %th City
-            %th State
-            %th Zip
-            %th Heading
-            %th Time code
-            %th Permalink
-        %tbody
-      .spinner
-        .spinner-container.container1
-          .circle1
-          .circle2
-          .circle3
-          .circle4
-        .spinner-container.container2
-          .circle1
-          .circle2
-          .circle3
-          .circle4
-        .spinner-container.container3
-          .circle1
-          .circle2
-          .circle3
-          .circle4
+    -#.spinner
+    -#  .spinner-container.container1
+    -#    .circle1
+    -#    .circle2
+    -#    .circle3
+    -#    .circle4
+    -#  .spinner-container.container2
+    -#    .circle1
+    -#    .circle2
+    -#    .circle3
+    -#    .circle4
+    -#  .spinner-container.container3
+    -#    .circle1
+    -#    .circle2
+    -#    .circle3
+    -#    .circle4

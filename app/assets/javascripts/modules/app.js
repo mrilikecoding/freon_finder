@@ -1,12 +1,14 @@
-// Backbone Application ________________________________________________________________ */
+// Backbone app
+var freonFinder = {
+    model:{},
+    view:{},
+    collection:{},
+    router:{}
+}
 
-var app = app || {}
-
-
-// MODELS
-
-window.Posting = Backbone.Model.extend({
-    defaults:{
+//model
+freonFinder.model.Postings = Backbone.Model.extend({
+    default:{
         category: "",
         timestamp: null,
         id: null,
@@ -14,118 +16,193 @@ window.Posting = Backbone.Model.extend({
         location: {},
         external_id: "",
         heading: "",
-        external_url: ""
+        external_url: "",
+        body: ""
     }
 });
 
-// COLLECTIONS
 
-window.Postings = Backbone.Collection.extend({
-    model: Posting,
-    url:"/list"
+//collection
+freonFinder.collection.Postings = Backbone.Collection.extend({
+
+    search : function(letters){
+
+        if (letters == ""){
+            return this;
+        }
+
+        var pattern = new RegExp(letters,"gi");
+        return _(this.filter(function(data) {
+            console.log('getting ' + letters);
+            return pattern.test(data.get("heading"));
+        }));
+    },
+
+    url: "/list"
+
 
 });
 
-// VIEWS
 
-window.PostingsView = Backbone.View.extend({
-    initialize: function(){
-        this.template = _.template(tpl.get('postings'));
+freonFinder.collection.postings = new freonFinder.collection.Postings();
+freonFinder.collection.postings.fetch()
+
+
+
+//views
+freonFinder.view.PostingsItem = Backbone.View.extend({
+    tagName: 'tr',
+    events: {},
+    render: function(data) {
+        $(this.el).html(this.template(this.model.toJSON()));
+        return this;
     },
-    render: function(){
-        var self = this;
-        $('.spinner').hide();
-        _.each(self.model.models, function (posting) {
-            $('.freon-finder tbody').append(self.template(posting.toJSON()));
+    initialize : function(){
+        this.template = _.template(tpl.get('posting_item'));
+    }
+});
+
+freonFinder.view.PostingsContainer = Backbone.View.extend({
+    tagName: 'div',
+    events: {
+        "keyup #searchTask" : "search",
+        "rendered" : "search"
+    },
+    render: function(data) {
+        $(this.el).html(this.template).trigger('rendered');
+
+        return this;
+    },
+    renderList : function(postings){
+        postings.each(function(posting){
+
+            var view = new freonFinder.view.PostingsItem({
+                model: posting,
+                collection: this.collection
+            });
+
+            $("tbody").append(view.render().el);
         });
         return this;
+    },
+    initialize : function(){
+        this.template = _.template(tpl.get('posting_container'));
+        this.collection.bind("reset", this.render, this);
+        //this.on('rendered', this.search, this);
+    },
+    search: function(e){
+        var letters = $("#searchTask").val() ? $("#searchTask").val() : "freon";
+        this.renderList(this.collection.search(letters));
     }
 });
 
-window.MapView = Backbone.View.extend({
 
-   initialize: function(){
+freonFinder.view.MapsContainer = Backbone.View.extend({
+    tagName: 'div class="map-container"',
+
+//    events: {
+//        "keyup #searchTask" : "search"
+//    },
+
+    initialize: function(){
         this.template = _.template(tpl.get('map'));
+        this.collection.bind("reset", this.render, this);
+
     },
-   render: function(){
+
+    render: function(){
+        $(this.el).html(this.template);
+        return this;
+    },
+//    search: function(e){
+//        var letters = $("#searchTask").val();
+//        this.drawMap(this.collection);
+//    },
+
+    drawMap: function(postings) {
         var self = this;
-        $('.freon-finder .map-container').html(self.template(this.model.toJSON()));
-       return this;
-   },
-   events: {
-        'click li.map': function(){
-        }
-   },
+        var mapOptions = {
+            center: new google.maps.LatLng(41.397, -87.644),
+            zoom: 5
+        };
 
-   drawMap: function() {
-       var self = this;
-       var mapOptions = {
-           center: new google.maps.LatLng(41.397, -87.644),
-           zoom: 5
-       };
+        var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
-       var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+        var infowindow;
 
-       _.each(self.model.models, function (posting) {
-           var lat = posting.attributes.location.lat;
-           var long = posting.attributes.location.long;
-//           var Latlng = new google.maps.LatLng(-25.363882,131.044922);
-           var Latlng = new google.maps.LatLng(lat,long);
+        postings.each(function(posting){
+            var p = posting.attributes;
+            var lat = p.location.lat;
+            var long = p.location.long;
+            var heading = p.heading;
+            var location = p.location.state + ", " + p.location.zipcode;
+            var post_url = p.external_url;
+            var formatted_address = p.location.formatted_address;
 
-           var marker = new google.maps.Marker({
-               position: Latlng,
-               title:"Hello World!"
-           });
+            var Latlng = new google.maps.LatLng(lat,long);
+            var marker = new google.maps.Marker({
+                position: Latlng,
+                title:"Hello World!",
+                animation: google.maps.Animation.DROP
+            });
 
 
-           // To add the marker to the map, call setMap();
-           marker.setMap(map);
-       });
+            // To add the marker to the map, call setMap();
+            marker.setMap(map);
 
 
-   }
-});
+            var contentString = '<div id="content">'+
+                '<div id="siteNotice">'+
+                '</div>'+
+                '<h1 id="firstHeading" class="firstHeading">' + heading + '</h1>'+
+                '<div id="bodyContent">'+
+                '<p>Location: ' + location + '</p>' +
+                '<p>Formatted Address: ' + formatted_address + '</p>' +
+                '<p>Source: <a href="'+ post_url + '">'+
+                post_url + '</a> '+
+                '</p></div></div>';
 
-// ROUTER
 
-var AppRouter = Backbone.Router.extend({
+            google.maps.event.addListener(marker, 'click', function() {
 
-    initialize:function () {
-        if (this.postings) {
-            this.renderPostings(this);
-        } else {
-            this.bootstrapPostings(this);
-        }
-    },
+                if (infowindow){
+                    infowindow.close();
+                }
 
-    renderPostings: function (self) {
-        app.postingsView = new PostingsView({model:self.postings});
-        app.postingsView.render();
-        app.postingsView.trigger('rendered');
-    },
+                infowindow = new google.maps.InfoWindow({
+                    content: contentString
+                });
 
-    renderMap: function (self) {
-        app.mapView = new MapView({model:self.postings});
-        app.mapView.render();
-        app.mapView.drawMap(self);
-        app.mapView.trigger('mapViewRendered');
-
-    },
-
-    bootstrapPostings: function(self){
-        self.postings = new Postings();
-        self.postings.fetch({
-            success: function(){
-                self.renderMap(self);
-                self.renderPostings(self);
-            }
+                infowindow.open(map,marker);
+            });
         });
     }
 });
 
 
+// router
+freonFinder.router.Postings = Backbone.Router.extend({
 
-//UTILS
+    initialize: function(){
+
+        this.postContainerView = new freonFinder.view.PostingsContainer({
+            collection: freonFinder.collection.postings
+
+        });
+
+        this.mapContainerView = new freonFinder.view.MapsContainer({
+            collection:freonFinder.collection.postings
+        });
+
+        $('.spinner').hide();
+        $(".freon-finder").append(this.mapContainerView.render().el);
+        $(".freon-finder").append(this.postContainerView.render().el);
+        this.mapContainerView.drawMap(this.mapContainerView.collection);
+    }
+});
+
+
+
 var tpl = {
 
     // Hash of preloaded templates for the app
@@ -163,7 +240,9 @@ var tpl = {
 
 
 // load templates and kickoff backbone app freon_finder.js
-tpl.loadTemplates(['postings', 'map'], function () {
-    app = new AppRouter();
+tpl.loadTemplates(['postings', 'map', 'posting_container', 'posting_item'], function () {
+
+
+    freonFinder.router.postings = new freonFinder.router.Postings;
     Backbone.history.start();
 });

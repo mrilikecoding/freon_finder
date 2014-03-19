@@ -1,8 +1,26 @@
 <tr>
-    <td><%= location.city %></td>
-    <td><%= location.state %></td>
-    <td><%= location.zipcode %></td>
+    <td><%= location.state + ", " + location.zipcode %></td>
     <td><p><%= heading %></td>
-    <td><%= timestamp %></td>
-    <td><a class="btn btn-default" target="_blank" href ="<%= external_url %>">See Post</a></td>
+    <td><%= new Date(timestamp * 1000) %></td>
+
+    <td>
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-default">
+                <div class="glyphicon glyphicon-star-empty"></div>
+            </button>
+            <button type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-trash"></span>
+            </button>
+            <button class="btn btn-default">
+                <a class="" target="_blank" href ="<%= external_url %>">
+                    <div class="glyphicon glyphicon-chevron-right"></div>
+
+
+                </a>
+            </button>
+
+        </div>
+
+        </td>
 </tr>

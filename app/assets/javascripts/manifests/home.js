@@ -2,6 +2,7 @@
 //= require ../vendor/underscore-min
 //= require ../vendor/backbone-min
 //= require ../vendor/bootstrap.min
+//= require ../vendor/jquery.table2CSV
 //= require ../modules/app
 //= require ../modules/home
 

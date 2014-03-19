@@ -18,9 +18,15 @@ body {
     padding: 0;
 
     #map-canvas {
-      height: 300px;
+      height: 400px;
 
 
+    }
+
+    .map-button{
+      position: absolute;
+      z-index: 1;
+      font-size: 2em;
     }
   }
 
@@ -37,22 +43,6 @@ body {
   border-bottom: 1px solid #eee;
 }
 
-
-
-/* Sidebar navigation */
-.nav-sidebar {
-  margin-right: -21px; /* 20px padding + 1px border */
-  margin-bottom: 20px;
-  margin-left: -20px;
-}
-.nav-sidebar > li > a {
-  padding-right: 20px;
-  padding-left: 20px;
-}
-.nav-sidebar > .active > a {
-  color: #fff;
-  background-color: #428bca;
-}
 
 //spinner
 
