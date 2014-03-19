@@ -33,7 +33,6 @@ freonFinder.collection.Postings = Backbone.Collection.extend({
 
         var pattern = new RegExp(letters,"gi");
         return _(this.filter(function(data) {
-            console.log('getting ' + letters);
             return pattern.test(data.get("heading"));
         }));
     },
