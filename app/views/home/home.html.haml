@@ -15,20 +15,20 @@
         %span.icon-bar
       %a.navbar-brand{href: "#"}
         Freon Finder
-        %span.small.result-count.text-info
+        %span.result-count.text-info is fetching data...
 
     / Collect the nav links, forms, and other content for toggling
     .collapse.navbar-collapse
       %form.navbar-form.navbar-left{role: "search"}
         .form-group
-          %input#searchTask.form-control{placeholder: "Search headings...", type: "text"}/
-          .checkbox-inline
+          .checkbox-inline.btn.btn-xs
             %input.filter{:type =>"checkbox", "data-reject-word" => "22"} Filter R22
-          .checkbox-inline
+          .checkbox-inline.btn.btn-xs
             %input.filter{:type =>"checkbox", "data-reject-word" => "134A"} Filter R-134A
+          %input#searchTask.form-control{placeholder: "Search headings...", type: "text"}/
 
       %ul.nav.navbar-nav
-        %li.active
+        %li
           %a.refresh-map{href: "#"}
             Refresh Map
             .glyphicon.glyphicon-refresh

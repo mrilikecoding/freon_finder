@@ -84,7 +84,7 @@ freonFinder.view.PostingsContainer = Backbone.View.extend({
 
         console.log(postings);
 
-        $('.result-count').text('Displaying ' + (postings.length ? postings.length : postings._wrapped.length) + ' results' );
+        $('.result-count').text('is displaying ' + (postings.length ? postings.length : postings._wrapped.length) + ' results' );
 
         postings.each(function(posting){
 
