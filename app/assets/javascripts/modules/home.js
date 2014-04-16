@@ -25,7 +25,7 @@ FreonFinder.home = (function($, document, window, undefined) {
     function init() {
 
         $(document)
-            .on('click', '.map-button', toggleMap)
+            .on('click', '.toggle-map', toggleMap)
             .on('click', '#csv', exportCSV)
 
     }
@@ -35,12 +35,7 @@ FreonFinder.home = (function($, document, window, undefined) {
 
     function toggleMap(){
         var $map = $("#map-canvas");
-        var visibleMap = $($map).is(":visible");
-        if (visibleMap) {
-            $map.slideUp();
-        }  else {
-            $map.slideDown();
-        }
+        $map.toggle();
     }
 
     function exportCSV(){

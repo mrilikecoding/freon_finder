@@ -12,31 +12,42 @@
         %span.icon-bar
         %span.icon-bar
         %span.icon-bar
-      %a.navbar-brand{href: "#"} Freon Finder
+      %a.navbar-brand{href: "#"}
+        Freon Finder
+        %span.small.result-count
     .navbar-collapse.collapse
-      %form.navbar-form.navbar-right
-        -#%input#filter{:type => "text", :class => "form-control", :placeholder => "Search..."}
-
       %ul.nav.navbar-nav.navbar-right
         %li.listings
+          %a.form-group.form-inline{:href => "#"}
+            Filter
+            %input.filter{:type =>"checkbox", "data-reject-word" => "22"} R22
+            %input.filter{:type =>"checkbox", "data-reject-word" => "134A"} R-134A
+        %li
+          %a.toggle-map{href: "#"}
+            Toggle Map
+        %li
+          %a.refresh-map{href: "#"}
+            Refresh Map
+            .glyphicon.glyphicon-refresh
+        %li
           %a#csv{href: "#"}
             Export CSV
             .glyphicon.glyphicon-cloud-download
 .container
   .freon-finder
-    -#.spinner
-    -#  .spinner-container.container1
-    -#    .circle1
-    -#    .circle2
-    -#    .circle3
-    -#    .circle4
-    -#  .spinner-container.container2
-    -#    .circle1
-    -#    .circle2
-    -#    .circle3
-    -#    .circle4
-    -#  .spinner-container.container3
-    -#    .circle1
-    -#    .circle2
-    -#    .circle3
-    -#    .circle4
+    .spinner
+      .spinner-container.container1
+        .circle1
+        .circle2
+        .circle3
+        .circle4
+      .spinner-container.container2
+        .circle1
+        .circle2
+        .circle3
+        .circle4
+      .spinner-container.container3
+        .circle1
+        .circle2
+        .circle3
+        .circle4
