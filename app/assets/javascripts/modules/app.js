@@ -71,7 +71,7 @@ freonFinder.view.PostingsItem = Backbone.View.extend({
 
 freonFinder.view.PostingsContainer = Backbone.View.extend({
     events: {
-        "keyup #searchTask" : "search"
+//        "keyup #searchTask" : "search"
     },
     render: function(data) {
         $(this.el).html(this.template);
@@ -102,11 +102,11 @@ freonFinder.view.PostingsContainer = Backbone.View.extend({
     initialize : function(){
         this.template = _.template(tpl.get('posting_container'));
         this.collection.bind("reset", this.render, this);
-    },
-    search: function(e){
-        var letters = $("#searchTask").val();
-        this.renderList(this.collection.search(letters));
     }
+//    search: function(e){
+//        var letters = $("#searchTask").val();
+//        this.renderList(this.collection.search(letters));
+//    }
 });
 
 
@@ -217,24 +217,34 @@ freonFinder.router.Postings = Backbone.Router.extend({
         $(".freon-finder").append(this.mapContainerView.render().el);
         $(".freon-finder").append(this.postContainerView.render().el);
         this.mapContainerView.drawMap(this.mapContainerView.collection);
-        this.postContainerView.search();
+        this.postContainerView.renderList(freonFinder.collection.postings);
 
 
-        $(document).on('click', '.refresh-map', function(){
-            var letters = $("#searchTask").val(),
-                postings = freonFinder.collection.postings.search(letters);
-            self.mapContainerView.drawMap(postings);
-        });
+        $(document)
+            .on('click', '.refresh-map', function(){
+                var letters = $("#searchTask").val(),
+                    postings = freonFinder.collection.postings.search(letters);
+                self.mapContainerView.drawMap(postings);
+            })
 
-        $(document).on('change', '.filter', function(){
-            var word = $(this).data('reject-word'),
-                postings = freonFinder.collection.postings;
-            if( $(this).is(':checked')){
-                self.postContainerView.renderList(postings.rejectWord(word));
-            } else {
-                self.postContainerView.renderList(postings.search(""));
-            }
-        });
+            .on('change', '.filter', function(){
+                var word = $(this).data('reject-word'),
+                    postings = freonFinder.collection.postings;
+                if( $(this).is(':checked')){
+                    self.postContainerView.renderList(postings.rejectWord(word));
+                } else {
+                    self.postContainerView.renderList(postings.search(""));
+                }
+            })
+
+            .on('keyup', '#searchTask', function(){
+                console.log('change');
+                var letters = $("#searchTask").val(),
+                    postings = freonFinder.collection.postings.search(letters);
+                self.postContainerView.renderList(postings);
+            });
+
+
 
 
 
