@@ -46,7 +46,7 @@ freonFinder.collection.Postings = Backbone.Collection.extend({
 
     },
 
-    url: "/list"
+    url: "/list?search=" + window.SEARCH_TERM
 
 });
 

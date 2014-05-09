@@ -1,0 +1,23 @@
+= content_for :css_placeholder do
+  = stylesheet_link_tag "manifests/home"
+
+.text-center
+  .jumbotron
+    %h1
+      Welcome to FreonFinder
+    %h2
+      Enter your search term, filter results, export data.
+
+
+  #headerwrap
+    .container
+      .row
+        .col-lg-12
+          %h1
+            Search Craigslist
+            .glyphicon.glyphicon-search
+          = form_tag(results_path, :method => "get", id: "search", :class => "form-inline") do
+            .form-group
+              = text_field_tag :search, params[:search], placeholder: "Freon.. R12.. Hot Dogs...", :class => "input-lg form-control"
+              = submit_tag "Search", :name => nil, :class => "btn btn-warning btn-lg"
+
