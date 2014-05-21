@@ -52,7 +52,6 @@ freonFinder.collection.Postings = Backbone.Collection.extend({
 
 
 freonFinder.collection.postings = new freonFinder.collection.Postings();
-freonFinder.collection.postings.fetch()
 
 
 
@@ -103,10 +102,7 @@ freonFinder.view.PostingsContainer = Backbone.View.extend({
         this.template = _.template(tpl.get('posting_container'));
         this.collection.bind("reset", this.render, this);
     }
-//    search: function(e){
-//        var letters = $("#searchTask").val();
-//        this.renderList(this.collection.search(letters));
-//    }
+
 });
 
 
@@ -199,50 +195,55 @@ freonFinder.view.MapsContainer = Backbone.View.extend({
 freonFinder.router.Postings = Backbone.Router.extend({
 
     initialize: function(){
+        freonFinder.collection.postings.fetch({
+            error: function(){
+                alert('error!');
+            },
+            success: function(){
+                var self = this;
+                var $checkboxes = $('input', '.filters');
+                this.postContainerView = new freonFinder.view.PostingsContainer({
+                    collection: freonFinder.collection.postings
 
-        var self = this;
+                });
 
-        var $checkboxes = $('input', '.filters');
+                this.mapContainerView = new freonFinder.view.MapsContainer({
+                    collection:freonFinder.collection.postings
+                });
 
-        this.postContainerView = new freonFinder.view.PostingsContainer({
-            collection: freonFinder.collection.postings
+                $('.spinner').hide();
+                $(".freon-finder").append(this.mapContainerView.render().el);
+                $(".freon-finder").append(this.postContainerView.render().el);
+                this.mapContainerView.drawMap(this.mapContainerView.collection);
+                this.postContainerView.renderList(freonFinder.collection.postings);
 
+
+                $(document)
+                    .on('click', '.refresh-map', function(){
+                        var letters = $("#searchTask").val(),
+                            postings = freonFinder.collection.postings.search(letters);
+                        self.mapContainerView.drawMap(postings);
+                    })
+
+                    .on('change', '.filter', function(){
+                        var word = $(this).data('reject-word'),
+                            postings = freonFinder.collection.postings;
+                        if( $(this).is(':checked')){
+                            self.postContainerView.renderList(postings.rejectWord(word));
+                        } else {
+                            self.postContainerView.renderList(postings.search(""));
+                        }
+                    })
+
+                    .on('keyup', '#searchTask', function(){
+                        console.log('change');
+                        var letters = $("#searchTask").val(),
+                            postings = freonFinder.collection.postings.search(letters);
+                        self.postContainerView.renderList(postings);
+                    });
+            }
         });
 
-        this.mapContainerView = new freonFinder.view.MapsContainer({
-            collection:freonFinder.collection.postings
-        });
-
-        $('.spinner').hide();
-        $(".freon-finder").append(this.mapContainerView.render().el);
-        $(".freon-finder").append(this.postContainerView.render().el);
-        this.mapContainerView.drawMap(this.mapContainerView.collection);
-        this.postContainerView.renderList(freonFinder.collection.postings);
-
-
-        $(document)
-            .on('click', '.refresh-map', function(){
-                var letters = $("#searchTask").val(),
-                    postings = freonFinder.collection.postings.search(letters);
-                self.mapContainerView.drawMap(postings);
-            })
-
-            .on('change', '.filter', function(){
-                var word = $(this).data('reject-word'),
-                    postings = freonFinder.collection.postings;
-                if( $(this).is(':checked')){
-                    self.postContainerView.renderList(postings.rejectWord(word));
-                } else {
-                    self.postContainerView.renderList(postings.search(""));
-                }
-            })
-
-            .on('keyup', '#searchTask', function(){
-                console.log('change');
-                var letters = $("#searchTask").val(),
-                    postings = freonFinder.collection.postings.search(letters);
-                self.postContainerView.renderList(postings);
-            });
 
 
 
@@ -292,8 +293,6 @@ var tpl = {
 
 // load templates and kickoff backbone app freon_finder.js
 tpl.loadTemplates(['postings', 'map', 'posting_container', 'posting_item'], function () {
-
-
     freonFinder.router.postings = new freonFinder.router.Postings;
     Backbone.history.start();
 });

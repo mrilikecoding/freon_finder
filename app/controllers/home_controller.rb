@@ -1,20 +1,24 @@
 class HomeController < ApplicationController
 
-  def index
-    @search_term = params[:search].present? ? params[:search] : "freon"
-    puts "nate"
-    puts params[:search]
-    render "home/home"
-  end
-
   def welcome
     render "home/welcome"
   end
 
+  def index
+    @search_term = params[:search].present? ? params[:search] : "freon"
+    puts params[:search]
+    render "home/home"
+  end
+
   def get_list
-      puts "nate2"
-      puts params[:search]
-      @search_term = params[:search]
+    @search_term = params[:search]
+    @postings = []
+
+    if @search_term.downcase == "freon"
+      @postings = Posting.grab_postings
+      puts "Pulling Freon Postings from DB: #{@postings.count} records"
+      return render json: @postings
+    else
       response = HTTParty.get(URI.encode("http://search.3taps.com/?auth_token=6480f6c096df27e96b7da685d3f1c1ee&heading=#{@search_term}&rpp=100&sort=-timestamp"))
       @postings = response["postings"]
       @next_page = response["next_page"]
@@ -35,7 +39,10 @@ class HomeController < ApplicationController
 
       check_response
       puts "Postings: #{@postings.size}"
+      puts @postings.to_json
 
       return render json: @postings.to_json
+
+    end
   end
 end
