@@ -14,7 +14,7 @@ class HomeController < ApplicationController
     @search_term = params[:search]
     @postings = []
 
-    if @search_term.downcase == "freon"
+    if @search_term.downcase == "r12" || @search_term.downcase == "r-12"
       @postings = Posting.grab_postings
       puts "Pulling Freon Postings from DB: #{@postings.count} records"
       return render json: @postings
