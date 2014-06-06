@@ -2,7 +2,8 @@ class Posting < ActiveRecord::Base
 
   def self.get_postings
 
-    @search_term = "freon"
+    # @search_term = "freon"
+    @search_term = "r12|r-12"
 
     response = HTTParty.get(URI.encode("http://search.3taps.com/?auth_token=6480f6c096df27e96b7da685d3f1c1ee&heading=#{@search_term}&rpp=100&sort=-timestamp"))
     @postings = response["postings"]
