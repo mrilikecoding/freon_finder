@@ -18,7 +18,7 @@
       %a.navbar-brand{href: "#{root_path}"}
         Freon Finder
         %span.result-count.text-info
-          = @search_term.downcase == "freon" ? "is pulling local data for Freon..." : "is searching craigslist for #{@search_term}..."
+          = @search_term.downcase == "r12" || @search_term.downcase == "r-12" ? "is pulling local data for #{@search_term}..." : "is searching craigslist for #{@search_term}..."
 
     / Collect the nav links, forms, and other content for toggling
     .collapse.navbar-collapse
