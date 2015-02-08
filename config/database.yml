@@ -9,7 +9,7 @@ development:
   encoding: unicode
   database: freon_finder
   pool: 5
-  username: nathan
+  username: nathangreen
   password:
 
 #test:
@@ -23,5 +23,5 @@ test:
   encoding: unicode
   database: freon_finder
   pool: 5
-  username: nathan
+  username: nathangreen
   password:

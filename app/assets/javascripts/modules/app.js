@@ -4,7 +4,7 @@ var freonFinder = {
     view:{},
     collection:{},
     router:{}
-}
+};
 
 //model
 freonFinder.model.Postings = Backbone.Model.extend({
@@ -27,26 +27,37 @@ freonFinder.collection.Postings = Backbone.Collection.extend({
 
     search : function(letters){
 
-        if (letters == ""){
+        if (letters === ''){
             return this;
         }
 
-        var pattern = new RegExp(letters,"gi");
+        var pattern = new RegExp(letters,'gi');
         return _(this.filter(function(data) {
-            return pattern.test(data.get("heading"));
+            return pattern.test(data.get('heading'));
         }));
     },
 
     rejectWord : function(letters){
-
-        var pattern = new RegExp(letters,"gi");
+        var pattern = new RegExp(letters,'gi');
         return _(this.reject(function(data) {
-            return pattern.test(data.get("heading"));
+            return pattern.test(data.get('heading'));
         }));
 
     },
 
-    url: "/list?search=" + window.SEARCH_TERM
+    byState: function(state){
+        console.log(state);
+        if (state.toLowerCase() !== 'filter by state') {
+            return _(this.filter(function(posting){
+                return posting.attributes.location.state === state;
+            }));
+
+        } else {
+            return this;
+        }
+    },
+
+    url: '/list?search=' + window.SEARCH_TERM
 
 });
 
@@ -61,10 +72,14 @@ freonFinder.view.PostingsItem = Backbone.View.extend({
     events: {},
     render: function(data) {
         $(this.el).html(this.template(this.model.toJSON()));
+        
+        var $filterByState = $('#filterByState');
+        $filterByState.append(this.stateName(this.model.toJSON()));
         return this;
     },
     initialize : function(){
         this.template = _.template(tpl.get('posting_item'));
+        this.stateName = _.template('<option>' + this.model.attributes.location.state + '</option>');
     }
 });
 
@@ -80,11 +95,9 @@ freonFinder.view.PostingsContainer = Backbone.View.extend({
         console.log('render');
 
         $("tbody").html("");
-
-        console.log(postings);
-
         $('.result-count').text('is displaying ' + (postings.length ? postings.length : postings._wrapped.length) + ' results' );
 
+        console.log(postings);
         postings.each(function(posting){
 
             var view = new freonFinder.view.PostingsItem({
@@ -224,32 +237,28 @@ freonFinder.router.Postings = Backbone.Router.extend({
                             postings = freonFinder.collection.postings.search(letters);
                         self.mapContainerView.drawMap(postings);
                     })
-
                     .on('change', '.filter', function(){
                         var word = $(this).data('reject-word'),
                             postings = freonFinder.collection.postings;
                         if( $(this).is(':checked')){
                             self.postContainerView.renderList(postings.rejectWord(word));
                         } else {
-                            self.postContainerView.renderList(postings.search(""));
+                            self.postContainerView.renderList(postings.search(''));
                         }
                     })
-
                     .on('keyup', '#searchTask', function(){
                         console.log('change');
                         var letters = $("#searchTask").val(),
                             postings = freonFinder.collection.postings.search(letters);
                         self.postContainerView.renderList(postings);
+                    })
+                    .on('change', '#filterByState', function(){
+                        var state = $('#filterByState').val(),
+                            postings = freonFinder.collection.postings.byState(state);
+                        self.postContainerView.renderList(postings);
                     });
             }
         });
-
-
-
-
-
-
-
     }
 });
 
@@ -279,7 +288,7 @@ var tpl = {
                     callback();
                 }
             });
-        }
+        };
 
         loadTemplate(0);
     },
