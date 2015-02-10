@@ -46,7 +46,6 @@ freonFinder.collection.Postings = Backbone.Collection.extend({
     },
 
     byState: function(state){
-        console.log(state);
         if (state.toLowerCase() !== 'filter by state') {
             return _(this.filter(function(posting){
                 return posting.attributes.location.state === state;
@@ -64,40 +63,60 @@ freonFinder.collection.Postings = Backbone.Collection.extend({
 
 freonFinder.collection.postings = new freonFinder.collection.Postings();
 
-
-
 //views
+freonFinder.view.filterStateItem = Backbone.View.extend({
+    tagName: 'option',
+    render: function(data){
+        $(this.el).html(this.template(this.model.toJSON()));
+        return this;
+    },
+    initialize: function(){
+        this.template = _.template('<%= location.state %>');
+    }
+});
+
+freonFinder.view.filterStateContainer = Backbone.View.extend({
+
+    render: function(data) {
+        $(this.el).html(this.template);
+        return this;
+    },
+    renderStates: function(postings){
+        $('#filterByState').html('');
+        postings.each(function(posting){
+            var view = new freonFinder.view.filterStateItem({
+                model: posting,
+                collection: this.collection
+            });
+            $('#filterByState').append(view.render().el);
+        });
+        return this;
+    },
+    initialize: function(){
+        this.collection.bind('reset', this.render, this);
+    }
+});
+
 freonFinder.view.PostingsItem = Backbone.View.extend({
     tagName: 'tr',
-    events: {},
     render: function(data) {
         $(this.el).html(this.template(this.model.toJSON()));
-        
-        var $filterByState = $('#filterByState');
-        $filterByState.append(this.stateName(this.model.toJSON()));
         return this;
     },
     initialize : function(){
         this.template = _.template(tpl.get('posting_item'));
-        this.stateName = _.template('<option>' + this.model.attributes.location.state + '</option>');
     }
 });
 
 freonFinder.view.PostingsContainer = Backbone.View.extend({
-    events: {
-//        "keyup #searchTask" : "search"
-    },
     render: function(data) {
         $(this.el).html(this.template);
         return this;
     },
     renderList : function(postings){
-        console.log('render');
-
-        $("tbody").html("");
+        $('tbody').html('');
         $('.result-count').text('is displaying ' + (postings.length ? postings.length : postings._wrapped.length) + ' results' );
 
-        console.log(postings);
         postings.each(function(posting){
 
             var view = new freonFinder.view.PostingsItem({
@@ -105,7 +124,7 @@ freonFinder.view.PostingsContainer = Backbone.View.extend({
                 collection: this.collection
             });
 
-            $("tbody").append(view.render().el);
+            $('tbody').append(view.render().el);
         });
 
 
@@ -113,7 +132,7 @@ freonFinder.view.PostingsContainer = Backbone.View.extend({
     },
     initialize : function(){
         this.template = _.template(tpl.get('posting_container'));
-        this.collection.bind("reset", this.render, this);
+        this.collection.bind('reset', this.render, this);
     }
 
 });
@@ -122,7 +141,7 @@ freonFinder.view.PostingsContainer = Backbone.View.extend({
 freonFinder.view.MapsContainer = Backbone.View.extend({
 
     search: function(){
-        var letters = $("#searchTask").val(),
+        var letters = $('#searchTask').val(),
             postings = freonFinder.collection.postings.search(letters);
 
         freonFinder.view.MapsContainer.drawMap(postings);
@@ -130,11 +149,9 @@ freonFinder.view.MapsContainer = Backbone.View.extend({
 
     tagName: 'div class="map-container"',
 
-
     initialize: function(){
         this.template = _.template(tpl.get('map'));
-        this.collection.bind("reset", this.render, this);
-
+        this.collection.bind('reset', this.render, this);
     },
 
     render: function(){
@@ -151,7 +168,6 @@ freonFinder.view.MapsContainer = Backbone.View.extend({
         };
 
         var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-
         var infowindow;
 
         postings.each(function(posting){
@@ -170,10 +186,8 @@ freonFinder.view.MapsContainer = Backbone.View.extend({
                 //animation: google.maps.Animation.DROP
             });
 
-
             // To add the marker to the map, call setMap();
             marker.setMap(map);
-
 
             var contentString = '<div id="content">'+
                 '<div id="siteNotice">'+
@@ -215,21 +229,27 @@ freonFinder.router.Postings = Backbone.Router.extend({
             success: function(){
                 var self = this;
                 var $checkboxes = $('input', '.filters');
+
                 this.postContainerView = new freonFinder.view.PostingsContainer({
                     collection: freonFinder.collection.postings
+                });
 
+                this.filterStateContainerView = new freonFinder.view.filterStateContainer({
+                    collection: freonFinder.collection.postings
                 });
 
                 this.mapContainerView = new freonFinder.view.MapsContainer({
-                    collection:freonFinder.collection.postings
+                    collection: freonFinder.collection.postings
                 });
 
                 $('.spinner').hide();
-                $(".freon-finder").append(this.mapContainerView.render().el);
-                $(".freon-finder").append(this.postContainerView.render().el);
+                $('.freon-finder').append(this.mapContainerView.render().el);
+                $('.freon-finder').append(this.postContainerView.render().el);
+                $('#filterByState').append(this.filterStateContainerView.render().el);
+
                 this.mapContainerView.drawMap(this.mapContainerView.collection);
                 this.postContainerView.renderList(freonFinder.collection.postings);
-
+                this.filterStateContainerView.renderStates(freonFinder.collection.postings);
 
                 $(document)
                     .on('click', '.refresh-map', function(){
@@ -255,7 +275,11 @@ freonFinder.router.Postings = Backbone.Router.extend({
                     .on('change', '#filterByState', function(){
                         var state = $('#filterByState').val(),
                             postings = freonFinder.collection.postings.byState(state);
-                        self.postContainerView.renderList(postings);
+                        if (state !== ''){
+                            self.postContainerView.renderList(postings);
+                        } else {
+                            self.postContainerView.renderList(freonFinder.collection.postings);
+                        }
                     });
             }
         });
