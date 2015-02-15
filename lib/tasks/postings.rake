@@ -9,7 +9,8 @@ namespace :postings do
 
   desc "destroy postings older than two weeks"
   task :prune_old_records => :environment do
-    Posting.where("created_at < :week", {:week => 2.week.ago})
+    Posting.where("created_at < :week", {:week => 1.week.ago}).delete_all
+    puts "#{Time.now} Postings Pruned"
   end
 
 end
