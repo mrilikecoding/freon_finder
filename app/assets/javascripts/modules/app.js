@@ -47,9 +47,12 @@ freonFinder.collection.Postings = Backbone.Collection.extend({
 
     byState: function(state){
         if (state.toLowerCase() !== 'filter by state') {
-            return _(this.filter(function(posting){
-                return posting.attributes.location.state === state;
+            var filtered =  _(this.filter(function(posting){
+                if (typeof(posting.get('location').state) !== undefined){
+                    return posting.get('location').state === state;
+                }
             }));
+            return filtered;
 
         } else {
             return this;
@@ -82,14 +85,14 @@ freonFinder.view.filterStateContainer = Backbone.View.extend({
         return this;
     },
     renderStates: function(postings){
-        $('#filterByState').html('');
-        postings.each(function(posting){
-            var view = new freonFinder.view.filterStateItem({
-                model: posting,
-                collection: this.collection
-            });
-            $('#filterByState').append(view.render().el);
+        $('#filterByState').html('').append('<option value="">All States</option>');
+        
+        var states  = _.uniq(_.pluck(postings.pluck('location'), 'state')).sort();
+
+        _.each(states, function(state){
+            $('#filterByState').append('<option>' + state + '</option>');
         });
+
         return this;
     },
     initialize: function(){
@@ -271,14 +274,17 @@ freonFinder.router.Postings = Backbone.Router.extend({
                         var letters = $("#searchTask").val(),
                             postings = freonFinder.collection.postings.search(letters);
                         self.postContainerView.renderList(postings);
+                        _.debounce(self.mapContainerView.drawMap(postings), 1000, true);
                     })
                     .on('change', '#filterByState', function(){
                         var state = $('#filterByState').val(),
                             postings = freonFinder.collection.postings.byState(state);
                         if (state !== ''){
                             self.postContainerView.renderList(postings);
+                            self.mapContainerView.drawMap(postings);
                         } else {
                             self.postContainerView.renderList(freonFinder.collection.postings);
+                            self.mapContainerView.drawMap(freonFinder.collection.postings);
                         }
                     });
             }
